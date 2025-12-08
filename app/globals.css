@@ -2,26 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Global base ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #000000;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* ---------- LOGIN PAGE FEATURE CHIPS (COOL) ---------- */
+
+.login-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.8rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-image: linear-gradient(#000000dd, #000000dd),
+    linear-gradient(120deg, rgba(244, 114, 182, 0.9), rgba(56, 189, 248, 0.9));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  color: rgba(248, 250, 252, 0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 10px;
+  transition: all 0.35s ease;
+  cursor: default;
+  box-shadow: 0 0 0px rgba(244, 114, 182, 0.0);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(244, 114, 182, 1) 0,
+    rgba(56, 189, 248, 1) 100%
+  );
+  box-shadow: 0 0 10px rgba(244, 114, 182, 0.9);
+}
+
+.login-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(248, 250, 252, 0.5),
+    transparent
+  );
+  transform: translateX(-140%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.login-chip:hover::after {
+  transform: translateX(140%);
+  opacity: 1;
+  transition: transform 0.75s ease, opacity 0.75s ease;
+}
+
+.login-chip:hover {
+  box-shadow: 0 0 22px rgba(244, 114, 182, 0.9);
+  transform: translateY(-1px);
+}
+
+/* ---------- DUST OVERLAY PARTICLES ---------- */
+
+.dust-particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(248, 250, 252, 0.95);
+  box-shadow: 0 0 18px rgba(244, 114, 182, 0.9);
+  opacity: 0;
+  filter: blur(0.4px);
+  animation-name: dustFloat;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes dustFloat {
+  0% {
+    transform: translate3d(-18px, 26px, 0) scale(0.9);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(32px, -60px, 0) scale(0.7);
+    opacity: 0;
   }
 }
