@@ -228,76 +228,118 @@ function FollowUpPanel({ followUp, onChoice }) {
 
 function SummaryScreen({ summary, history, scenario, onRestart, onExit }) {
   return (
-    <FadeIn deps={summary}>
-      <div className="flex flex-col items-center gap-6 max-w-2xl mx-auto px-4 text-center w-full">
+    <div
+      className="absolute inset-0 z-10 overflow-y-auto"
+      style={{
+        opacity: 1,
+        background: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.85) 100%)",
+        backdropFilter: "blur(2px)",
+      }}
+    >
+      <div className="min-h-full flex flex-col items-center px-4 py-12 md:px-8">
 
-        <div className="text-xs tracking-[0.45em] uppercase text-amber-400/50">Simulation Complete</div>
-        <h1 className="text-2xl md:text-3xl font-light tracking-[0.2em] uppercase text-amber-100">{summary.title}</h1>
-
-        {summary.coreValue && (
-          <div className="px-6 py-2.5 border border-amber-400/40 rounded-full text-sm tracking-[0.3em] uppercase text-amber-300 bg-amber-400/5">
-            Core value: {summary.coreValue}
+        {/* ── Header ── */}
+        <div className="flex flex-col items-center gap-4 text-center mb-10">
+          <div className="text-xs tracking-[0.5em] uppercase text-amber-400/50">
+            Simulation Complete
           </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left mt-1">
-          <div className="md:col-span-2 border border-white/10 rounded-xl p-5 bg-black/50 backdrop-blur">
-            <div className="text-xs tracking-[0.35em] uppercase text-slate-500 mb-3">What your journey reveals</div>
-            <p className="text-sm text-slate-300 leading-loose">{summary.overview}</p>
-          </div>
-
-          <div className="border border-amber-400/20 rounded-xl p-5 bg-amber-400/3 backdrop-blur">
-            <div className="text-xs tracking-[0.35em] uppercase text-amber-400/60 mb-3">Hidden pattern</div>
-            <p className="text-sm text-amber-100/80 leading-relaxed">{summary.pattern}</p>
-          </div>
-
-          <div className="border border-white/10 rounded-xl p-5 bg-black/50 backdrop-blur">
-            <div className="text-xs tracking-[0.35em] uppercase text-slate-500 mb-3">Most likely reality</div>
-            <p className="text-sm text-slate-300 leading-relaxed">{summary.finalReality}</p>
-          </div>
-
-          <div className="md:col-span-2 border border-purple-400/20 rounded-xl p-5 bg-purple-400/3 backdrop-blur">
-            <div className="text-xs tracking-[0.35em] uppercase text-purple-400/60 mb-3">Final advice</div>
-            <p className="text-base text-purple-100/90 leading-relaxed font-light">{summary.advice}</p>
-          </div>
-        </div>
-
-        <div className="w-full border border-white/8 rounded-xl p-5 bg-black/40 text-left">
-          <div className="text-xs tracking-[0.35em] uppercase text-slate-500 mb-4">Your full journey</div>
-          <div className="flex flex-col gap-2">
-            <div className="text-sm text-slate-500">
-              Started with: <span className="text-slate-300">"{scenario}"</span>
+          <h1 className="text-3xl md:text-5xl font-light tracking-[0.2em] uppercase text-amber-100 max-w-3xl leading-tight">
+            {summary.title}
+          </h1>
+          {summary.coreValue && (
+            <div className="mt-2 px-8 py-3 border border-amber-400/40 rounded-full text-sm tracking-[0.4em] uppercase text-amber-300 bg-amber-400/5">
+              Core value — {summary.coreValue}
             </div>
-            {history.map((entry, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm">
-                <span className="text-slate-600">{i + 1}.</span>
-                <span className={entry.type === "branch_selected" ? "text-amber-400/70" : "text-slate-500"}>
-                  {entry.type === "branch_selected" ? "Entered →" : "Chose →"}
-                </span>
-                <span className={entry.type === "branch_selected" ? "text-amber-200/80" : "text-slate-400"}>
-                  {entry.content}
-                </span>
-              </div>
-            ))}
-          </div>
+          )}
         </div>
 
-        <div className="flex gap-4 mt-2 pb-6">
-          <button
-            onClick={onRestart}
-            className="px-8 py-3.5 border border-white/20 text-slate-300 text-sm tracking-[0.3em] uppercase rounded-full bg-black/60 hover:border-white/40 hover:text-white transition-all duration-300"
-          >
-            NEW SIMULATION
-          </button>
-          <button
-            onClick={onExit}
-            className="px-8 py-3.5 border border-amber-400/50 text-amber-200 text-sm tracking-[0.3em] uppercase rounded-full bg-black/60 hover:bg-amber-500/10 hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-300"
-          >
-            EXIT DREAMSCAPE
-          </button>
+        {/* ── Main cards ── */}
+        <div className="w-full max-w-3xl flex flex-col gap-5">
+
+          {/* What your journey reveals */}
+          <div className="border border-white/12 rounded-2xl p-6 md:p-8 bg-black/60 backdrop-blur">
+            <div className="text-xs tracking-[0.4em] uppercase text-slate-500 mb-4">
+              What your journey reveals
+            </div>
+            <p className="text-base md:text-lg text-slate-200 leading-loose font-light">
+              {summary.overview}
+            </p>
+          </div>
+
+          {/* Pattern + Reality side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="border border-amber-400/20 rounded-2xl p-6 bg-amber-400/4 backdrop-blur">
+              <div className="text-xs tracking-[0.4em] uppercase text-amber-400/60 mb-4">
+                Hidden pattern
+              </div>
+              <p className="text-base text-amber-100/85 leading-relaxed font-light">
+                {summary.pattern}
+              </p>
+            </div>
+
+            <div className="border border-white/12 rounded-2xl p-6 bg-black/50 backdrop-blur">
+              <div className="text-xs tracking-[0.4em] uppercase text-slate-500 mb-4">
+                Most likely reality
+              </div>
+              <p className="text-base text-slate-300 leading-relaxed font-light">
+                {summary.finalReality}
+              </p>
+            </div>
+          </div>
+
+          {/* Final advice — hero card */}
+          <div className="border border-purple-400/30 rounded-2xl p-8 bg-purple-500/5 backdrop-blur">
+            <div className="text-xs tracking-[0.4em] uppercase text-purple-400/60 mb-4">
+              Final advice
+            </div>
+            <p className="text-xl md:text-2xl text-purple-100 leading-relaxed font-light">
+              {summary.advice}
+            </p>
+          </div>
+
+          {/* Journey recap */}
+          <div className="border border-white/8 rounded-2xl p-6 md:p-8 bg-black/50 backdrop-blur">
+            <div className="text-xs tracking-[0.4em] uppercase text-slate-500 mb-6">
+              Your full journey
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="text-sm text-slate-500">
+                Started with:{" "}
+                <span className="text-slate-200 font-light">"{scenario}"</span>
+              </div>
+              {history.map((entry, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="text-slate-600 text-sm mt-0.5 w-5 shrink-0">{i + 1}.</span>
+                  <span className={`text-sm shrink-0 ${entry.type === "branch_selected" ? "text-amber-400/70" : "text-slate-500"}`}>
+                    {entry.type === "branch_selected" ? "Entered →" : "Chose →"}
+                  </span>
+                  <span className={`text-sm leading-relaxed ${entry.type === "branch_selected" ? "text-amber-200" : "text-slate-400"}`}>
+                    {entry.content}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 pb-8">
+            <button
+              onClick={onRestart}
+              className="px-10 py-4 border border-white/20 text-slate-300 text-sm tracking-[0.3em] uppercase rounded-full bg-black/60 hover:border-white/40 hover:text-white transition-all duration-300"
+            >
+              NEW SIMULATION
+            </button>
+            <button
+              onClick={onExit}
+              className="px-10 py-4 border border-amber-400/50 text-amber-200 text-sm tracking-[0.3em] uppercase rounded-full bg-black/60 hover:bg-amber-500/10 hover:shadow-[0_0_30px_rgba(251,191,36,0.35)] transition-all duration-300"
+            >
+              EXIT DREAMSCAPE
+            </button>
+          </div>
+
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 }
 
@@ -439,8 +481,7 @@ export default function DreamscapeMode({ initialTopic, onExit }) {
         </header>
 
         {/* Center stage */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 overflow-y-auto">
-
+       <div className="flex-1 flex flex-col items-center justify-start px-4 py-6 overflow-y-auto">
           {phase === "idle" && (
             <FadeIn deps="idle">
               <div className="flex flex-col items-center gap-6 text-center">
@@ -523,14 +564,16 @@ export default function DreamscapeMode({ initialTopic, onExit }) {
           )}
 
           {phase === "summary" && summary && (
-            <SummaryScreen
-              summary={summary}
-              history={history}
-              scenario={initialTopic}
-              onRestart={restartSimulation}
-              onExit={onExit}
-            />
-          )}
+  <div className="absolute inset-0 z-10">
+    <SummaryScreen
+      summary={summary}
+      history={history}
+      scenario={initialTopic}
+      onRestart={restartSimulation}
+      onExit={onExit}
+    />
+  </div>
+)}
 
         </div>
       </div>
