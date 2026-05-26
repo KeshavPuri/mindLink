@@ -7,6 +7,7 @@ import WormholeScene from "@/components/three/WormholeScene";
 import DustOverlay from "@/components/ui/DustOverlay";
 import NeuralMode from "@/components/neural/NeuralMode";
 import PortalMode from "@/components/portal/PortalMode"; // 🟣 NEW
+import DreamscapeMode from "@/components/dreamscape/DreamscapeMode"; // 🟡 NEW
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -17,7 +18,7 @@ export default function HomePage() {
 
   const [pendingNeuralTopic, setPendingNeuralTopic] = useState("");
   const [pendingPortalTopic, setPendingPortalTopic] = useState(""); // 🟣 NEW
-
+ const [pendingDreamscapeTopic, setPendingDreamscapeTopic] = useState(""); // 🟡 NEW
   // 🆕 snapshot bhi store karenge (pure graph ke liye)
   const [pendingNeuralSnapshot, setPendingNeuralSnapshot] = useState(null);
 
@@ -155,10 +156,24 @@ export default function HomePage() {
     );
   }
 
+ // ---------------- FULL DREAMSCAPE SCREEN ----------------  🟡 NEW
+  if (activeMode === "DREAMSCAPE_GRAPH") {
+    return (
+      <DreamscapeMode
+        initialTopic={pendingDreamscapeTopic}
+        onExit={() => {
+          setActiveMode(null);
+          setPendingDreamscapeTopic("");
+        }}
+      />
+    );
+  }
+
   // ---------------- DASHBOARD + INIT MODES ----------------
   const neuralInit = activeMode === "NEURAL_INIT";
   const portalInit = activeMode === "PORTAL_INIT";
-  const anyInit = neuralInit || portalInit;
+ const dreamscapeInit = activeMode === "DREAMSCAPE_INIT"; // 🟡 NEW
+  const anyInit = neuralInit || portalInit || dreamscapeInit; // 🟡 UPDATED
 
   return (
     <main className="h-screen w-screen overflow-hidden relative bg-black text-white">
@@ -286,6 +301,19 @@ export default function HomePage() {
                   >
                     PORTAL MODE
                   </button>
+                   {/* DREAMSCAPE 🟡 NEW */}
+                  <button
+                    onClick={() => setActiveMode("DREAMSCAPE_INIT")}
+                    className={`px-8 py-4 text-[10px] md:text-base border rounded-xl tracking-[0.50em] uppercase bg-black/55 backdrop-blur
+                    transition-all duration-300
+                    ${
+                      activeMode === "DREAMSCAPE_INIT" || activeMode === "DREAMSCAPE_GRAPH"
+                        ? "border-amber-400 text-amber-200 shadow-[0_0_35px_rgba(251,191,36,0.55)] bg-amber-500/10"
+                        : "border-amber-300/70 text-amber-200 hover:bg-amber-400/10 hover:shadow-[0_0_18px_rgba(251,191,36,0.35)]"
+                    }`}
+                  >
+                    DREAMSCAPE
+                  </button>
                 </div>
               </div>
             </div>
@@ -318,6 +346,19 @@ export default function HomePage() {
             onConfirm={(topic) => {
               setPendingPortalTopic(topic);
               setActiveMode("PORTAL_GRAPH");
+            }}
+          />
+        )}
+         {/* DREAMSCAPE_INIT OVERLAY 🟡 NEW */}
+        {dreamscapeInit && (
+          <DreamscapeInitOverlay
+            onCancel={() => {
+              setActiveMode(null);
+              setPendingDreamscapeTopic("");
+            }}
+            onConfirm={(topic) => {
+              setPendingDreamscapeTopic(topic);
+              setActiveMode("DREAMSCAPE_GRAPH");
             }}
           />
         )}
@@ -402,6 +443,51 @@ function PortalInitOverlay({ onCancel, onConfirm }) {
         Click the central portal to open 5 new portals. Click again on a child
         portal to go deeper.
       </p>
+
+      <button
+        onClick={onCancel}
+        className="mt-4 text-[10px] tracking-[0.25em] uppercase text-slate-400 hover:text-slate-200"
+      >
+        CANCEL
+      </button>
+    </div>
+  );
+}
+// ---------------- DreamscapeInitOverlay 🟡 NEW ----------------
+function DreamscapeInitOverlay({ onCancel, onConfirm }) {
+  const [topic, setTopic] = useState("");
+  const start = () => { if (!topic.trim()) return; onConfirm(topic.trim()); };
+
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/65 backdrop-blur-sm z-30">
+      <div className="text-[11px] md:text-xs tracking-[0.3em] uppercase text-amber-300/70">
+        Initialize Scenario
+      </div>
+
+      <h2 className="text-[11px] md:text-sm tracking-[0.25em] uppercase text-slate-300 text-center max-w-sm">
+        What decision or possibility do you want to explore?
+      </h2>
+
+      <input
+        autoFocus
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && start()}
+        placeholder='e.g. "Should I move abroad?"'
+        className="px-6 py-3 w-[300px] md:w-[480px] bg-black/80 border border-amber-300/70 text-center text-xs md:text-sm tracking-[0.15em] rounded-full outline-none focus:border-amber-400 focus:shadow-[0_0_25px_rgba(251,191,36,0.6)] transition text-white placeholder:text-slate-500 placeholder:normal-case placeholder:tracking-normal"
+      />
+
+      <div className="flex flex-col items-center gap-1 text-[9px] md:text-[10px] text-slate-500 tracking-[0.15em] uppercase">
+        <span>Try: "Should I become a trader?" • "What if AI replaces teachers?"</span>
+        <span>"Should I leave college?" • "What if India goes fully AI-driven?"</span>
+      </div>
+
+      <button
+        onClick={start}
+        className="mt-2 px-10 py-3 border border-amber-400/80 text-amber-200 text-[10px] tracking-[0.3em] uppercase rounded-full bg-black/70 hover:bg-amber-500/10 hover:shadow-[0_0_30px_rgba(251,191,36,0.7)] transition"
+      >
+        ENTER DREAMSCAPE
+      </button>
 
       <button
         onClick={onCancel}

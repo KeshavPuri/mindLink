@@ -13,10 +13,9 @@ export async function POST(req) {
     }
 
     const completion = await client.chat.completions.create({
-model: "gpt-5.4-mini",
+     model: "gpt-5.4-mini",
       messages: [{ role: "user", content: prompt }],
-      // you can tune temperature / max tokens here if needed
-      // temperature: 0.6, max_tokens: 250
+      temperature: 0.85,
     });
 
     const text = completion.choices?.[0]?.message?.content ?? "";
@@ -26,7 +25,7 @@ model: "gpt-5.4-mini",
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("NEURAL API ERROR:", err);
+    console.error("DREAMSCAPE API ERROR:", err);
     return new Response(JSON.stringify({ error: String(err) }), { status: 500 });
   }
 }
