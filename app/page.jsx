@@ -225,11 +225,10 @@ export default function HomePage() {
                 }}
               />
 
-              {/* MIDDLE LINE */}
-              <div className="text-[10px] md:text-sm text-slate-400 tracking-[0.2em] uppercase text-center max-w-xl select-none">
-                Or explore through a specific mode below
-              </div>
-
+ {/* MIDDLE LINE */}
+<div className="text-[10px] md:text-sm text-white tracking-[0.2em] uppercase text-center max-w-xl select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]">
+  Or explore through a specific mode below
+</div>
               {/* MODE BUTTONS */}
               <div className="pb-4 md:pb-8 flex flex-col items-center gap-3 select-none">
                 <div className="flex flex-col sm:flex-row gap-6 md:gap-10">
@@ -298,6 +297,7 @@ export default function HomePage() {
 }
 
 // ── Quantum Search Bar ────────────────────────────────────────────────
+// ── Quantum Search Bar ────────────────────────────────────────────────
 function QuantumSearchBar({ onSearch }) {
   const [query, setQuery]     = useState("");
   const [focused, setFocused] = useState(false);
@@ -308,28 +308,33 @@ function QuantumSearchBar({ onSearch }) {
     <div className="w-full max-w-2xl flex flex-col items-center gap-4 select-none">
 
       {/* Label */}
-      <div className="text-xs md:text-sm tracking-[0.45em] uppercase text-slate-300">
+      <div className={`text-xs md:text-sm tracking-[0.45em] uppercase transition-all duration-500 ${
+        focused ? "text-emerald-300" : "text-slate-400"
+      }`}>
         Quantum Intelligence Search
       </div>
 
       {/* Search bar */}
       <div className={`relative w-full transition-all duration-500 ${focused ? "scale-[1.02]" : "scale-100"}`}>
 
-        {/* Glow ring when focused */}
+        {/* Animated glow ring when focused */}
         {focused && (
-          <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-white/0 via-white/20 to-white/0 blur-sm pointer-events-none" />
+          <>
+            <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-emerald-500/0 via-emerald-400/40 to-emerald-500/0 blur-md pointer-events-none animate-pulse" />
+            <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-teal-500/0 via-emerald-300/20 to-teal-500/0 blur-xl pointer-events-none" />
+          </>
         )}
 
-        <div className={`relative flex items-center gap-4 px-6 py-5 rounded-2xl border bg-white/5 backdrop-blur-md transition-all duration-500
+        <div className={`relative flex items-center gap-4 px-6 py-5 rounded-2xl border bg-black/60 backdrop-blur-md transition-all duration-500
           ${focused
-            ? "border-white/50 shadow-[0_0_50px_rgba(255,255,255,0.12)]"
-            : "border-white/25 shadow-[0_0_20px_rgba(255,255,255,0.04)]"
+            ? "border-emerald-400/70 shadow-[0_0_45px_rgba(52,211,153,0.25),inset_0_0_30px_rgba(52,211,153,0.05)]"
+            : "border-emerald-500/25 shadow-[0_0_15px_rgba(52,211,153,0.06)]"
           }`}
         >
           {/* Search icon */}
           <svg
-            className={`shrink-0 transition-all duration-300 ${focused ? "text-white" : "text-slate-400"}`}
-            width="22" height="22" viewBox="0 0 24 24" fill="none"
+            className={`shrink-0 transition-all duration-300 ${focused ? "text-emerald-300" : "text-slate-500"}`}
+            width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
           >
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -343,14 +348,14 @@ function QuantumSearchBar({ onSearch }) {
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             placeholder="Search the universe… Black Holes, AI, Consciousness"
-            className="flex-1 bg-transparent outline-none text-base md:text-lg text-white placeholder:text-slate-500 tracking-wide"
+            className="flex-1 bg-transparent outline-none text-base md:text-lg text-white placeholder:text-slate-600 tracking-wide caret-emerald-400"
           />
 
           {/* Search button */}
           {query.trim() && (
             <button
               onMouseDown={(e) => { e.preventDefault(); submit(); }}
-              className="shrink-0 px-5 py-2 border border-white/40 text-white text-xs tracking-[0.3em] uppercase rounded-full bg-white/10 hover:bg-white/20 hover:border-white/70 transition-all duration-200"
+              className="shrink-0 px-5 py-2 border border-emerald-400/60 text-emerald-200 text-xs tracking-[0.3em] uppercase rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 hover:border-emerald-300/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.4)] transition-all duration-200"
             >
               SEARCH
             </button>
@@ -358,23 +363,24 @@ function QuantumSearchBar({ onSearch }) {
         </div>
       </div>
 
-      {/* Suggestion chips */}
-      <div className="flex flex-wrap justify-center gap-2">
-        {["Black Holes", "Human DNA", "Quantum Computing", "Future of AI", "Climate Change"].map((s) => (
-          <button
-            key={s}
-            onMouseDown={(e) => { e.preventDefault(); onSearch(s); }}
-            className="px-4 py-1.5 border border-white/20 rounded-full text-xs text-slate-300 tracking-[0.15em] uppercase bg-white/5 hover:border-white/50 hover:text-white hover:bg-white/10 transition-all duration-200"
-          >
-            {s}
-          </button>
-        ))}
-      </div>
+{/* Suggestion chips */}
+{/* Suggestion chips */}
+<div className="flex flex-wrap justify-center gap-2">
+  {["Black Holes", "Quantum Computing", "Future of AI", "Climate Change"].map((s) => (
+    <button
+      key={s}
+      onMouseDown={(e) => { e.preventDefault(); onSearch(s); }}
+      className="px-4 py-1.5 border border-pink-300/50 rounded-full text-xs text-white tracking-[0.15em] uppercase bg-pink-500/10 hover:border-pink-200 hover:text-white hover:bg-pink-500/20 hover:shadow-[0_0_16px_rgba(255,182,193,0.6)] transition-all duration-200 backdrop-blur-sm"
+    >
+      {s}
+    </button>
+  ))}
+</div>
 
-      {/* Helper text */}
-      <p className="text-xs text-slate-400 tracking-[0.2em] uppercase text-center">
-        Press Enter or click a suggestion to explore
-      </p>
+{/* Helper text */}
+<p className="text-xs text-white tracking-[0.2em] uppercase text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]">
+  Press Enter or click a suggestion to explore
+</p>
 
     </div>
   );
