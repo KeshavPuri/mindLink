@@ -6,22 +6,21 @@ import MindScene from "@/components/three/MindScene";
 import WormholeScene from "@/components/three/WormholeScene";
 import DustOverlay from "@/components/ui/DustOverlay";
 import NeuralMode from "@/components/neural/NeuralMode";
-import PortalMode from "@/components/portal/PortalMode";
 import DreamscapeMode from "@/components/dreamscape/DreamscapeMode";
 import QuantumMode from "@/components/quantum/QuantumMode";
+import StrategyMode from "@/components/strategy/StrategyMode";
 
 export default function HomePage() {
-  const [user, setUser]                     = useState(null);
-  const [authChecked, setAuthChecked]       = useState(false);
-  const [activeMode, setActiveMode]         = useState(null);
+  const [user, setUser]                                     = useState(null);
+  const [authChecked, setAuthChecked]                       = useState(false);
+  const [activeMode, setActiveMode]                         = useState(null);
   const [pendingNeuralTopic, setPendingNeuralTopic]         = useState("");
-  const [pendingPortalTopic, setPendingPortalTopic]         = useState("");
   const [pendingDreamscapeTopic, setPendingDreamscapeTopic] = useState("");
   const [pendingQuantumQuery, setPendingQuantumQuery]       = useState("");
+  const [pendingStrategyGoal, setPendingStrategyGoal]       = useState("");
   const [pendingNeuralSnapshot, setPendingNeuralSnapshot]   = useState(null);
-  const [neuralHistory, setNeuralHistory]   = useState([]);
+  const [neuralHistory, setNeuralHistory]                   = useState([]);
 
-  // ── Auth ──────────────────────────────────────────────────────────
   useEffect(() => {
     const init = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -47,7 +46,6 @@ export default function HomePage() {
     setActiveMode(null);
   };
 
-  // ── Loading ───────────────────────────────────────────────────────
   if (!authChecked) {
     return (
       <main className="h-screen w-screen flex items-center justify-center bg-black text-white">
@@ -58,7 +56,6 @@ export default function HomePage() {
     );
   }
 
-  // ── Login screen ──────────────────────────────────────────────────
   if (!user) {
     return (
       <main className="h-screen w-screen overflow-hidden relative">
@@ -72,8 +69,8 @@ export default function HomePage() {
           </p>
           <div className="mt-6 flex flex-col gap-2 items-center text-[10px] md:text-xs tracking-[0.2em] uppercase">
             <span className="login-chip"><span className="login-chip-dot" />Real-time 3D neural maps</span>
-            <span className="login-chip"><span className="login-chip-dot" />Dimensional AI search portals</span>
-            <span className="login-chip"><span className="login-chip-dot" />Encrypted personal knowledge vault</span>
+            <span className="login-chip"><span className="login-chip-dot" />Dreamscape future simulation</span>
+            <span className="login-chip"><span className="login-chip-dot" />Quantum AI search engine</span>
           </div>
           <button
             onClick={handleLogin}
@@ -101,15 +98,6 @@ export default function HomePage() {
     );
   }
 
-  if (activeMode === "PORTAL_GRAPH") {
-    return (
-      <PortalMode
-        initialTopic={pendingPortalTopic}
-        onExit={() => { setActiveMode(null); setPendingPortalTopic(""); }}
-      />
-    );
-  }
-
   if (activeMode === "DREAMSCAPE_GRAPH") {
     return (
       <DreamscapeMode
@@ -119,20 +107,29 @@ export default function HomePage() {
     );
   }
 
- if (activeMode === "QUANTUM_GRAPH") {
-  return (
-    <QuantumMode
-      initialQuery={pendingQuantumQuery}
-      onExit={() => { setActiveMode(null); setPendingQuantumQuery(""); }}
-    />
-  );
-}
+  if (activeMode === "QUANTUM_GRAPH") {
+    return (
+      <QuantumMode
+        initialQuery={pendingQuantumQuery}
+        onExit={() => { setActiveMode(null); setPendingQuantumQuery(""); }}
+      />
+    );
+  }
+
+  if (activeMode === "STRATEGY_GRAPH") {
+    return (
+      <StrategyMode
+        initialGoal={pendingStrategyGoal}
+        onExit={() => { setActiveMode(null); setPendingStrategyGoal(""); }}
+      />
+    );
+  }
 
   // ── Dashboard ─────────────────────────────────────────────────────
   const neuralInit     = activeMode === "NEURAL_INIT";
-  const portalInit     = activeMode === "PORTAL_INIT";
   const dreamscapeInit = activeMode === "DREAMSCAPE_INIT";
-  const anyInit        = neuralInit || portalInit || dreamscapeInit;
+  const strategyInit   = activeMode === "STRATEGY_INIT";
+  const anyInit        = neuralInit || dreamscapeInit || strategyInit;
 
   return (
     <main className="h-screen w-screen overflow-hidden relative bg-black text-white">
@@ -151,7 +148,7 @@ export default function HomePage() {
                 MINDLINK INTERFACE
               </span>
               <span className="text-slate-300 tracking-[0.20em] text-xs md:text-sm uppercase">
-                AI NEURAL • PORTAL ENGINE • DREAMSCAPE • QUANTUM
+                AI NEURAL • DREAMSCAPE • QUANTUM • STRATEGY
               </span>
             </div>
             <div className="flex items-center gap-6">
@@ -172,15 +169,14 @@ export default function HomePage() {
         {!anyInit && (
           <section className="flex flex-1">
 
-            {/* LEFT HISTORY PANEL */}
+            {/* LEFT HISTORY */}
             <aside className="w-64 md:w-72 border-r border-white/12 bg-black/35 backdrop-blur-sm px-4 py-5">
               <h3 className="text-pink-300 text-sm md:text-base tracking-[0.25em] uppercase mb-3">
                 HISTORY
               </h3>
               {neuralHistory.length === 0 ? (
                 <p className="text-xs md:text-sm text-slate-300/85 leading-relaxed">
-                  Every neural path and portal you explore will appear here with
-                  timestamp and topic trail.
+                  Every neural path and strategy you build will appear here with timestamp and topic trail.
                 </p>
               ) : (
                 <div className="space-y-2 text-[11px] md:text-xs text-slate-200/90">
@@ -204,7 +200,7 @@ export default function HomePage() {
               )}
             </aside>
 
-            {/* CENTER AREA */}
+            {/* CENTER */}
             <div className="flex-1 flex flex-col items-center justify-between py-10 md:py-14 px-4 md:px-10">
 
               {/* TOP TITLE */}
@@ -217,7 +213,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* ── QUANTUM SEARCH BAR ── */}
+              {/* QUANTUM SEARCH BAR */}
               <QuantumSearchBar
                 onSearch={(query) => {
                   setPendingQuantumQuery(query);
@@ -225,13 +221,15 @@ export default function HomePage() {
                 }}
               />
 
- {/* MIDDLE LINE */}
-<div className="text-[10px] md:text-sm text-white tracking-[0.2em] uppercase text-center max-w-xl select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]">
-  Or explore through a specific mode below
-</div>
+              <div className="text-[10px] md:text-sm text-white tracking-[0.2em] uppercase text-center max-w-xl select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]">
+                Or explore through a specific mode below
+              </div>
+
               {/* MODE BUTTONS */}
               <div className="pb-4 md:pb-8 flex flex-col items-center gap-3 select-none">
-                <div className="flex flex-col sm:flex-row gap-6 md:gap-10">
+                <div className="flex flex-col sm:flex-row gap-6 md:gap-8">
+
+                  {/* NEURAL */}
                   <button
                     onClick={() => setActiveMode("NEURAL_INIT")}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
@@ -243,17 +241,7 @@ export default function HomePage() {
                     NEURAL MODE
                   </button>
 
-                  <button
-                    onClick={() => setActiveMode("PORTAL_INIT")}
-                    className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
-                    ${activeMode === "PORTAL_INIT" || activeMode === "PORTAL_GRAPH"
-                      ? "border-purple-400 text-purple-200 shadow-[0_0_35px_rgba(200,100,255,0.55)] bg-purple-500/10"
-                      : "border-purple-300/70 text-purple-200 hover:bg-purple-400/10 hover:shadow-[0_0_18px_rgba(200,100,255,0.35)]"
-                    }`}
-                  >
-                    PORTAL MODE
-                  </button>
-
+                  {/* DREAMSCAPE */}
                   <button
                     onClick={() => setActiveMode("DREAMSCAPE_INIT")}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
@@ -264,9 +252,21 @@ export default function HomePage() {
                   >
                     DREAMSCAPE
                   </button>
+
+                  {/* STRATEGY */}
+                  <button
+                    onClick={() => setActiveMode("STRATEGY_INIT")}
+                    className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
+                    ${activeMode === "STRATEGY_INIT" || activeMode === "STRATEGY_GRAPH"
+                      ? "border-emerald-400 text-emerald-200 shadow-[0_0_35px_rgba(16,185,129,0.55)] bg-emerald-500/10"
+                      : "border-emerald-300/70 text-emerald-200 hover:bg-emerald-400/10 hover:shadow-[0_0_18px_rgba(16,185,129,0.35)]"
+                    }`}
+                  >
+                    STRATEGY
+                  </button>
+
                 </div>
               </div>
-
             </div>
           </section>
         )}
@@ -278,16 +278,16 @@ export default function HomePage() {
             onConfirm={(topic) => { setPendingNeuralTopic(topic); setPendingNeuralSnapshot(null); setActiveMode("NEURAL_GRAPH"); }}
           />
         )}
-        {portalInit && (
-          <PortalInitOverlay
-            onCancel={() => { setActiveMode(null); setPendingPortalTopic(""); }}
-            onConfirm={(topic) => { setPendingPortalTopic(topic); setActiveMode("PORTAL_GRAPH"); }}
-          />
-        )}
         {dreamscapeInit && (
           <DreamscapeInitOverlay
             onCancel={() => { setActiveMode(null); setPendingDreamscapeTopic(""); }}
             onConfirm={(topic) => { setPendingDreamscapeTopic(topic); setActiveMode("DREAMSCAPE_GRAPH"); }}
+          />
+        )}
+        {strategyInit && (
+          <StrategyInitOverlay
+            onCancel={() => { setActiveMode(null); setPendingStrategyGoal(""); }}
+            onConfirm={(goal) => { setPendingStrategyGoal(goal); setActiveMode("STRATEGY_GRAPH"); }}
           />
         )}
 
@@ -297,50 +297,32 @@ export default function HomePage() {
 }
 
 // ── Quantum Search Bar ────────────────────────────────────────────────
-// ── Quantum Search Bar ────────────────────────────────────────────────
 function QuantumSearchBar({ onSearch }) {
   const [query, setQuery]     = useState("");
   const [focused, setFocused] = useState(false);
-
   const submit = () => { if (query.trim()) onSearch(query.trim()); };
 
   return (
     <div className="w-full max-w-2xl flex flex-col items-center gap-4 select-none">
-
-      {/* Label */}
-      <div className={`text-xs md:text-sm tracking-[0.45em] uppercase transition-all duration-500 ${
-        focused ? "text-emerald-300" : "text-slate-400"
-      }`}>
+      <div className={`text-xs md:text-sm tracking-[0.45em] uppercase transition-all duration-500 ${focused ? "text-emerald-300" : "text-slate-400"}`}>
         Quantum Intelligence Search
       </div>
-
-      {/* Search bar */}
       <div className={`relative w-full transition-all duration-500 ${focused ? "scale-[1.02]" : "scale-100"}`}>
-
-        {/* Animated glow ring when focused */}
         {focused && (
           <>
             <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-emerald-500/0 via-emerald-400/40 to-emerald-500/0 blur-md pointer-events-none animate-pulse" />
             <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-teal-500/0 via-emerald-300/20 to-teal-500/0 blur-xl pointer-events-none" />
           </>
         )}
-
         <div className={`relative flex items-center gap-4 px-6 py-5 rounded-2xl border bg-black/60 backdrop-blur-md transition-all duration-500
           ${focused
-            ? "border-emerald-400/70 shadow-[0_0_45px_rgba(52,211,153,0.25),inset_0_0_30px_rgba(52,211,153,0.05)]"
+            ? "border-emerald-400/70 shadow-[0_0_45px_rgba(52,211,153,0.25)]"
             : "border-emerald-500/25 shadow-[0_0_15px_rgba(52,211,153,0.06)]"
-          }`}
-        >
-          {/* Search icon */}
-          <svg
-            className={`shrink-0 transition-all duration-300 ${focused ? "text-emerald-300" : "text-slate-500"}`}
-            width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-          >
+          }`}>
+          <svg className={`shrink-0 transition-all duration-300 ${focused ? "text-emerald-300" : "text-slate-500"}`}
+            width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
-
-          {/* Input */}
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -350,38 +332,27 @@ function QuantumSearchBar({ onSearch }) {
             placeholder="Search the universe… Black Holes, AI, Consciousness"
             className="flex-1 bg-transparent outline-none text-base md:text-lg text-white placeholder:text-slate-600 tracking-wide caret-emerald-400"
           />
-
-          {/* Search button */}
           {query.trim() && (
             <button
               onMouseDown={(e) => { e.preventDefault(); submit(); }}
-              className="shrink-0 px-5 py-2 border border-emerald-400/60 text-emerald-200 text-xs tracking-[0.3em] uppercase rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 hover:border-emerald-300/80 hover:shadow-[0_0_20px_rgba(52,211,153,0.4)] transition-all duration-200"
+              className="shrink-0 px-5 py-2 border border-emerald-400/60 text-emerald-200 text-xs tracking-[0.3em] uppercase rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 hover:border-emerald-300/80 transition-all duration-200"
             >
               SEARCH
             </button>
           )}
         </div>
       </div>
-
-{/* Suggestion chips */}
-{/* Suggestion chips */}
-<div className="flex flex-wrap justify-center gap-2">
-  {["Black Holes", "Quantum Computing", "Future of AI", "Climate Change"].map((s) => (
-    <button
-      key={s}
-      onMouseDown={(e) => { e.preventDefault(); onSearch(s); }}
-      className="px-4 py-1.5 border border-pink-300/50 rounded-full text-xs text-white tracking-[0.15em] uppercase bg-pink-500/10 hover:border-pink-200 hover:text-white hover:bg-pink-500/20 hover:shadow-[0_0_16px_rgba(255,182,193,0.6)] transition-all duration-200 backdrop-blur-sm"
-    >
-      {s}
-    </button>
-  ))}
-</div>
-
-{/* Helper text */}
-<p className="text-xs text-white tracking-[0.2em] uppercase text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]">
-  Press Enter or click a suggestion to explore
-</p>
-
+      <div className="flex flex-wrap justify-center gap-2">
+        {["Black Holes", "Quantum Computing", "Future of AI", "Climate Change"].map((s) => (
+          <button key={s} onMouseDown={(e) => { e.preventDefault(); onSearch(s); }}
+            className="px-4 py-1.5 border border-pink-300/50 rounded-full text-xs text-white tracking-[0.15em] uppercase bg-pink-500/10 hover:border-pink-200 hover:bg-pink-500/20 transition-all duration-200 backdrop-blur-sm">
+            {s}
+          </button>
+        ))}
+      </div>
+      <p className="text-xs text-white tracking-[0.2em] uppercase text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]">
+        Press Enter or click a suggestion to explore
+      </p>
     </div>
   );
 }
@@ -393,9 +364,7 @@ function NeuralInitOverlay({ onCancel, onConfirm }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur-sm z-30">
       <div className="text-[11px] md:text-xs tracking-[0.3em] uppercase text-slate-300">Initialize Subject</div>
-      <input
-        autoFocus value={topic}
-        onChange={(e) => setTopic(e.target.value)}
+      <input autoFocus value={topic} onChange={(e) => setTopic(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && start()}
         placeholder="TYPE A TOPIC…  (e.g. React Hooks)"
         className="px-6 py-3 w-[300px] md:w-[420px] bg-black/80 border border-cyan-300/70 text-center text-xs md:text-sm tracking-[0.2em] uppercase rounded-full outline-none focus:border-cyan-400 focus:shadow-[0_0_25px_rgba(34,211,238,0.7)] transition"
@@ -405,31 +374,6 @@ function NeuralInitOverlay({ onCancel, onConfirm }) {
       </button>
       <p className="mt-3 text-[10px] text-slate-300 tracking-[0.2em] uppercase text-center max-w-md">
         Left click a node to expand. Right click to inspect.
-      </p>
-      <button onClick={onCancel} className="mt-4 text-[10px] tracking-[0.25em] uppercase text-slate-400 hover:text-slate-200">CANCEL</button>
-    </div>
-  );
-}
-
-// ── PortalInitOverlay ─────────────────────────────────────────────────
-function PortalInitOverlay({ onCancel, onConfirm }) {
-  const [topic, setTopic] = useState("");
-  const start = () => { if (!topic.trim()) return; onConfirm(topic.trim()); };
-  return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur-sm z-30">
-      <div className="text-[11px] md:text-xs tracking-[0.3em] uppercase text-slate-300">Initialize Subject</div>
-      <input
-        autoFocus value={topic}
-        onChange={(e) => setTopic(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && start()}
-        placeholder='TYPE A TOPIC…  (e.g. "Elon Musk")'
-        className="px-6 py-3 w-[300px] md:w-[420px] bg-black/80 border border-purple-300/70 text-center text-xs md:text-sm tracking-[0.2em] uppercase rounded-full outline-none focus:border-purple-400 focus:shadow-[0_0_25px_rgba(192,132,252,0.8)] transition"
-      />
-      <button onClick={start} className="mt-2 px-10 py-3 border border-purple-400/80 text-purple-200 text-[10px] tracking-[0.3em] uppercase rounded-full bg-black/70 hover:bg-purple-500/10 hover:shadow-[0_0_25px_rgba(192,132,252,0.8)] transition">
-        ENTER PORTAL SPACE
-      </button>
-      <p className="mt-3 text-[10px] text-slate-300 tracking-[0.2em] uppercase text-center max-w-md">
-        Click the central portal to open 5 new portals.
       </p>
       <button onClick={onCancel} className="mt-4 text-[10px] tracking-[0.25em] uppercase text-slate-400 hover:text-slate-200">CANCEL</button>
     </div>
@@ -446,9 +390,7 @@ function DreamscapeInitOverlay({ onCancel, onConfirm }) {
       <h2 className="text-[11px] md:text-sm tracking-[0.25em] uppercase text-slate-300 text-center max-w-sm">
         What decision or possibility do you want to explore?
       </h2>
-      <input
-        autoFocus value={topic}
-        onChange={(e) => setTopic(e.target.value)}
+      <input autoFocus value={topic} onChange={(e) => setTopic(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && start()}
         placeholder='e.g. "Should I move abroad?"'
         className="px-6 py-3 w-[300px] md:w-[480px] bg-black/80 border border-amber-300/70 text-center text-xs md:text-sm tracking-[0.15em] rounded-full outline-none focus:border-amber-400 focus:shadow-[0_0_25px_rgba(251,191,36,0.6)] transition text-white placeholder:text-slate-500 placeholder:normal-case placeholder:tracking-normal"
@@ -465,5 +407,31 @@ function DreamscapeInitOverlay({ onCancel, onConfirm }) {
   );
 }
 
-
-
+// ── StrategyInitOverlay ───────────────────────────────────────────────
+function StrategyInitOverlay({ onCancel, onConfirm }) {
+  const [goal, setGoal] = useState("");
+  const start = () => { if (!goal.trim()) return; onConfirm(goal.trim()); };
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/65 backdrop-blur-sm z-30">
+      <div className="text-[11px] md:text-xs tracking-[0.3em] uppercase text-emerald-300/70">
+        Initialize Strategy
+      </div>
+      <h2 className="text-[11px] md:text-sm tracking-[0.25em] uppercase text-slate-300 text-center max-w-sm">
+        What goal do you want to build a strategy for?
+      </h2>
+      <input autoFocus value={goal} onChange={(e) => setGoal(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && start()}
+        placeholder='e.g. "Launch my SaaS in 90 days"'
+        className="px-6 py-3 w-[300px] md:w-[500px] bg-black/80 border border-emerald-300/70 text-center text-xs md:text-sm tracking-[0.15em] rounded-full outline-none focus:border-emerald-400 focus:shadow-[0_0_25px_rgba(16,185,129,0.6)] transition text-white placeholder:text-slate-500 placeholder:normal-case placeholder:tracking-normal"
+      />
+      <div className="flex flex-col items-center gap-1 text-[9px] md:text-[10px] text-slate-500 tracking-[0.15em] uppercase">
+        <span>Try: "Crack SSC CHSL in 6 months" • "Grow YouTube to 10k subscribers"</span>
+        <span>"Build a trading strategy" • "Launch a clothing brand from zero"</span>
+      </div>
+      <button onClick={start} className="mt-2 px-10 py-3 border border-emerald-400/80 text-emerald-200 text-[10px] tracking-[0.3em] uppercase rounded-full bg-black/70 hover:bg-emerald-500/10 hover:shadow-[0_0_30px_rgba(16,185,129,0.7)] transition">
+        ENTER STRATEGY SPACE
+      </button>
+      <button onClick={onCancel} className="mt-4 text-[10px] tracking-[0.25em] uppercase text-slate-400 hover:text-slate-200">CANCEL</button>
+    </div>
+  );
+}
