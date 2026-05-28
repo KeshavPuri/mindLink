@@ -119,14 +119,14 @@ export default function HomePage() {
     );
   }
 
-  if (activeMode === "QUANTUM_GRAPH") {
-    return (
-      <QuantumMode
-        initialQuery={pendingQuantumQuery}
-        onExit={() => { setActiveMode(null); setPendingQuantumQuery(""); }}
-      />
-    );
-  }
+ if (activeMode === "QUANTUM_GRAPH") {
+  return (
+    <QuantumMode
+      initialQuery={pendingQuantumQuery}
+      onExit={() => { setActiveMode(null); setPendingQuantumQuery(""); }}
+    />
+  );
+}
 
   // ── Dashboard ─────────────────────────────────────────────────────
   const neuralInit     = activeMode === "NEURAL_INIT";
