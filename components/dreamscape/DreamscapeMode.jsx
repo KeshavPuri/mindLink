@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { playSound } from "@/lib/soundEngine";
 import DreamscapeScene from "./DreamscapeScene";
 import {
   EMOTION_STYLES,
@@ -330,7 +331,7 @@ function SummaryScreen({ summary, history, scenario, onRestart, onExit }) {
               NEW SIMULATION
             </button>
             <button
-              onClick={onExit}
+           onClick={() => { playSound("exit"); onExit(); }}
               className="px-10 py-4 border border-amber-400/50 text-amber-200 text-sm tracking-[0.3em] uppercase rounded-full bg-black/60 hover:bg-amber-500/10 hover:shadow-[0_0_30px_rgba(251,191,36,0.35)] transition-all duration-300"
             >
               EXIT DREAMSCAPE

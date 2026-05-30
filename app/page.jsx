@@ -9,7 +9,8 @@ import NeuralMode from "@/components/neural/NeuralMode";
 import DreamscapeMode from "@/components/dreamscape/DreamscapeMode";
 import QuantumMode from "@/components/quantum/QuantumMode";
 import StrategyMode from "@/components/strategy/StrategyMode";
-
+import SoundControls from "@/components/ui/SoundControls";
+import { initSounds, playSound, playAmbient, stopAmbient, loadPreferences } from "@/lib/soundEngine";
 export default function HomePage() {
   const [user, setUser]                                     = useState(null);
   const [authChecked, setAuthChecked]                       = useState(false);
@@ -20,6 +21,18 @@ export default function HomePage() {
   const [pendingStrategyGoal, setPendingStrategyGoal]       = useState("");
   const [pendingNeuralSnapshot, setPendingNeuralSnapshot]   = useState(null);
   const [neuralHistory, setNeuralHistory]                   = useState([]);
+useEffect(() => {
+  loadPreferences();
+  initSounds();
+}, []);
+
+useEffect(() => {
+  if (user && !activeMode) {
+    playAmbient("/sounds/ambient.mp3");
+  } else if (activeMode) {
+    stopAmbient();
+  }
+}, [user, activeMode]);
 
   useEffect(() => {
     const init = async () => {
@@ -86,7 +99,7 @@ export default function HomePage() {
     );
   }
 
-  // ── Full screens ──────────────────────────────────────────────────
+  // ── Full screens ─────────────────────────────────────────────────
   if (activeMode === "NEURAL_GRAPH") {
     return (
       <NeuralMode
@@ -151,12 +164,13 @@ export default function HomePage() {
                 AI NEURAL • DREAMSCAPE • QUANTUM • STRATEGY
               </span>
             </div>
+            <SoundControls />
             <div className="flex items-center gap-6">
               <span className="text-xs md:text-sm tracking-[0.15em] text-slate-200">
                 {user.user_metadata?.name || user.email}
               </span>
               <button
-                onClick={handleLogout}
+               onClick={() => { playSound("exit"); handleLogout(); }}
                 className="text-xs md:text-sm text-red-300 hover:text-red-500 tracking-[0.25em] uppercase"
               >
                 LOGOUT
@@ -231,7 +245,7 @@ export default function HomePage() {
 
                   {/* NEURAL */}
                   <button
-                    onClick={() => setActiveMode("NEURAL_INIT")}
+                   onClick={() => { playSound("enter"); setActiveMode("NEURAL_INIT"); }}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
                     ${activeMode === "NEURAL_INIT" || activeMode === "NEURAL_GRAPH"
                       ? "border-cyan-400 text-cyan-200 shadow-[0_0_35px_rgba(0,255,255,0.5)] bg-cyan-500/10"
@@ -243,7 +257,7 @@ export default function HomePage() {
 
                   {/* DREAMSCAPE */}
                   <button
-                    onClick={() => setActiveMode("DREAMSCAPE_INIT")}
+                    onClick={() => { playSound("enter"); setActiveMode("DREAMSCAPE_INIT"); }}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
                     ${activeMode === "DREAMSCAPE_INIT" || activeMode === "DREAMSCAPE_GRAPH"
                       ? "border-amber-400 text-amber-200 shadow-[0_0_35px_rgba(251,191,36,0.55)] bg-amber-500/10"
@@ -255,7 +269,7 @@ export default function HomePage() {
 
                   {/* STRATEGY */}
                   <button
-                    onClick={() => setActiveMode("STRATEGY_INIT")}
+                    onClick={() => { playSound("enter"); setActiveMode("STRATEGY_INIT"); }}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
                     ${activeMode === "STRATEGY_INIT" || activeMode === "STRATEGY_GRAPH"
                       ? "border-emerald-400 text-emerald-200 shadow-[0_0_35px_rgba(16,185,129,0.55)] bg-emerald-500/10"
