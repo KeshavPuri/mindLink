@@ -357,7 +357,7 @@ function QuantumSearchBar({ onSearch }) {
         </div>
       </div>
       <div className="flex flex-wrap justify-center gap-2">
-        {["Black Holes", "Quantum Computing", "Future of AI", "Climate Change"].map((s) => (
+        {["Black Holes", "Quantum Computing", `&quot;Future of AI&quot;`, "Climate Change"].map((s) => (
           <button key={s} onMouseDown={(e) => { e.preventDefault(); onSearch(s); }}
             className="px-4 py-1.5 border border-pink-300/50 rounded-full text-xs text-white tracking-[0.15em] uppercase bg-pink-500/10 hover:border-pink-200 hover:bg-pink-500/20 transition-all duration-200 backdrop-blur-sm">
             {s}

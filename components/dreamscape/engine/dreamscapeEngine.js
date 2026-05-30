@@ -148,7 +148,7 @@ export function parseAIResponse(text) {
           id: "1",
           title: "Path of Growth",
           description: "You embrace the challenge and grow through difficulty. The journey permanently transforms who you are.",
-          detail: "You take the risk and commit fully. The first year is brutal — uncertainty, long hours, moments of doubt. But by year two, the compound effect kicks in. Skills sharpen, networks form, and opportunities arrive that simply don't exist for those who played it safe. You look back and realize the discomfort was the point.",
+          detail: "You take the risk and commit fully. The first year is brutal — uncertainty, long hours, moments of doubt. But by year two, the compound effect kicks in. Skills sharpen, networks form, and opportunities arrive that simply Don&apos;t exist for those who played it safe. You look back and realize the discomfort was the point.",
           timeline: "Within 2–3 years",
           keyConsequence: "Your identity shifts — you become someone who acts despite fear.",
           opportunities: ["Rare high-upside outcomes", "Accelerated skill development", "Expanded network and visibility"],

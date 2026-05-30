@@ -25,7 +25,7 @@ function OnboardingScreen({ goal, onConfirm }) {
     },
     {
       key: "level",
-      label: "What's your current level?",
+      label: `What&apos;s your current level?`,
       sub: "This decides where your strategy starts",
       options: [
         { label: "Complete beginner", value: "complete beginner" },
@@ -464,7 +464,7 @@ function AskStrategy({ goal, strategy, userContext }) {
 
   const quickPrompts = [
     "What should I do today?",
-    "I'm stuck, help me",
+    `I&apos;m feeling stuck — help`,
     "Biggest challenge?",
     "Weekly schedule?",
     "Miss a day — what now?",
