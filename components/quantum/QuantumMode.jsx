@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { playAmbient, stopAmbient } from "@/lib/soundEngine";
 import QuantumScene from "./QuantumScene";
 
 const TYPE_CONFIG = {
@@ -240,6 +241,14 @@ export default function QuantumMode({ initialQuery, onExit }) {
   const [phase, setPhase]       = useState("loading");
   const [data, setData]         = useState(null);
   const [error, setError]       = useState(null);
+
+  // Play ambient music when component mounts
+  useEffect(() => {
+    playAmbient("/sounds/ambient.mp3");
+    return () => {
+      stopAmbient();
+    };
+  }, []);
 
   const search = async (q) => {
     setQuery(q);

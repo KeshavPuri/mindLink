@@ -170,7 +170,7 @@ useEffect(() => {
                 {user.user_metadata?.name || user.email}
               </span>
               <button
-               onClick={() => { playSound("exit"); handleLogout(); }}
+               onClick={() => { playSound("click"); handleLogout(); }}
                 className="text-xs md:text-sm text-red-300 hover:text-red-500 tracking-[0.25em] uppercase"
               >
                 LOGOUT
@@ -245,7 +245,7 @@ useEffect(() => {
 
                   {/* NEURAL */}
                   <button
-                   onClick={() => { playSound("enter"); setActiveMode("NEURAL_INIT"); }}
+                   onClick={() => { playSound("click"); setActiveMode("NEURAL_INIT"); }}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
                     ${activeMode === "NEURAL_INIT" || activeMode === "NEURAL_GRAPH"
                       ? "border-cyan-400 text-cyan-200 shadow-[0_0_35px_rgba(0,255,255,0.5)] bg-cyan-500/10"
@@ -257,7 +257,7 @@ useEffect(() => {
 
                   {/* DREAMSCAPE */}
                   <button
-                    onClick={() => { playSound("enter"); setActiveMode("DREAMSCAPE_INIT"); }}
+                    onClick={() => { playSound("click"); setActiveMode("DREAMSCAPE_INIT"); }}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
                     ${activeMode === "DREAMSCAPE_INIT" || activeMode === "DREAMSCAPE_GRAPH"
                       ? "border-amber-400 text-amber-200 shadow-[0_0_35px_rgba(251,191,36,0.55)] bg-amber-500/10"
@@ -269,7 +269,7 @@ useEffect(() => {
 
                   {/* STRATEGY */}
                   <button
-                    onClick={() => { playSound("enter"); setActiveMode("STRATEGY_INIT"); }}
+                    onClick={() => { playSound("click"); setActiveMode("STRATEGY_INIT"); }}
                     className={`px-8 py-4 text-[10px] md:text-sm border rounded-xl tracking-[0.40em] uppercase bg-black/55 backdrop-blur transition-all duration-300
                     ${activeMode === "STRATEGY_INIT" || activeMode === "STRATEGY_GRAPH"
                       ? "border-emerald-400 text-emerald-200 shadow-[0_0_35px_rgba(16,185,129,0.55)] bg-emerald-500/10"
@@ -357,7 +357,7 @@ function QuantumSearchBar({ onSearch }) {
         </div>
       </div>
       <div className="flex flex-wrap justify-center gap-2">
-        {["Black Holes", "Quantum Computing", `&quot;Future of AI&quot;`, "Climate Change"].map((s) => (
+        {["Black Holes", "Quantum Computing", `Future of AI`, "Climate Change"].map((s) => (
           <button key={s} onMouseDown={(e) => { e.preventDefault(); onSearch(s); }}
             className="px-4 py-1.5 border border-pink-300/50 rounded-full text-xs text-white tracking-[0.15em] uppercase bg-pink-500/10 hover:border-pink-200 hover:bg-pink-500/20 transition-all duration-200 backdrop-blur-sm">
             {s}

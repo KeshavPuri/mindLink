@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { playSound, playAmbient, stopAmbient } from "@/lib/soundEngine";
 import StrategyScene from "./StrategyScene";
 import StrategyTreeView from "./StrategyTreeView";
 
@@ -91,7 +92,7 @@ function OnboardingScreen({ goal, onConfirm }) {
         {current.options.map((opt) => (
           <button
             key={opt.value}
-            onClick={() => handleSelect(opt.value)}
+            onClick={() => { playSound("click"); handleSelect(opt.value); }}
             className="px-5 py-4 border border-emerald-400/30 text-emerald-200 text-sm tracking-[0.15em] uppercase rounded-xl bg-black/60 backdrop-blur hover:bg-emerald-500/10 hover:border-emerald-400/70 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300 text-center"
           >
             {opt.label}
@@ -600,6 +601,33 @@ export default function StrategyMode({ initialGoal, onExit }) {
   const [completedNodes, setDone]   = useState([]);
   const [hoveredId, setHovered]     = useState(null);
   const [viewMode, setViewMode]     = useState("split"); // "split", "tree", or "3d"
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Triple-click detection for nodes
+  const [clickState, setClickState] = useState({
+    nodeId: null,
+    count: 0,
+    time: 0,
+  });
+
+  // Play ambient music when component mounts
+  useEffect(() => {
+    playAmbient("/sounds/ambient.mp3");
+    return () => {
+      stopAmbient();
+    };
+  }, []);
+
+  // Exit fullscreen on Escape
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === "Escape" && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [isFullscreen]);
 
   const generate = async (ctx) => {
     setContext(ctx);
@@ -629,10 +657,10 @@ export default function StrategyMode({ initialGoal, onExit }) {
   const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
-    <main className="h-screen w-screen overflow-hidden relative bg-[#010a04] text-white flex flex-col">
+    <main className={`bg-[#010a04] text-white overflow-hidden relative flex flex-col ${isFullscreen ? "h-screen w-screen fixed inset-0 z-50" : "h-screen w-screen"}`}>
 
       {/* Top bar */}
-      <header className="h-14 flex items-center justify-between px-6 md:px-8 bg-black/70 backdrop-blur border-b border-emerald-400/15 shrink-0 z-20">
+      <header className={`h-14 flex items-center justify-between px-6 md:px-8 bg-black/70 backdrop-blur border-b border-emerald-400/15 shrink-0 z-20 ${isFullscreen ? "hidden" : ""}`}>
         <div className="flex items-center gap-4">
           <div className="flex flex-col gap-0.5">
             <span className="text-emerald-300 uppercase tracking-[0.35em] text-xs md:text-sm">STRATEGY MODE</span>
@@ -653,6 +681,13 @@ export default function StrategyMode({ initialGoal, onExit }) {
           )}
         </div>
 
+        <button 
+          onClick={() => { playSound("click"); setIsFullscreen(!isFullscreen); }}
+          className="text-xs tracking-[0.25em] uppercase text-slate-500 hover:text-emerald-300 transition-colors mr-4"
+          title="Toggle fullscreen"
+        >
+          {isFullscreen ? "EXIT EXPAND" : "EXPAND"}
+        </button>
         <button onClick={onExit} className="text-xs tracking-[0.25em] uppercase text-slate-500 hover:text-emerald-300 transition-colors">
           ← EXIT
         </button>
