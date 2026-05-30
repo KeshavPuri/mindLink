@@ -9,64 +9,82 @@ import { useRef, useMemo } from "react";
 function PhaseNode({ position, phase, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) {
   const meshRef = useRef();
   const ringRef = useRef();
+  const innerRef = useRef();
+
+  // Phase-based colors
+  const phaseColors = {
+    1: { base: "#3b82f6", light: "#60a5fa", glow: "rgba(59, 130, 246, 0.3)" }, // blue
+    2: { base: "#8b5cf6", light: "#a78bfa", glow: "rgba(139, 92, 246, 0.3)" }, // purple
+    3: { base: "#f59e0b", light: "#fbbf24", glow: "rgba(245, 158, 11, 0.3)" }, // amber
+    4: { base: "#10b981", light: "#6ee7b7", glow: "rgba(16, 185, 129, 0.3)" }, // emerald
+  };
+  const colors = phaseColors[phase.number] || phaseColors[1];
 
   useFrame((state, delta) => {
     if (!meshRef.current) return;
     const t = state.clock.getElapsedTime();
-    meshRef.current.position.y = position[1] + Math.sin(t * 0.5 + phase.number) * 0.12;
+    meshRef.current.position.y = position[1] + Math.sin(t * 0.5 + phase.number) * 0.1;
     if (ringRef.current) ringRef.current.rotation.z += delta * 0.4;
-    const target = isSelected ? 1.25 : isHovered ? 1.1 : 1.0;
-    meshRef.current.scale.lerp(new THREE.Vector3(target, target, target), 0.1);
+    if (innerRef.current) innerRef.current.rotation.x += delta * 0.2;
+    const target = isSelected ? 1.3 : isHovered ? 1.15 : 1.0;
+    meshRef.current.scale.lerp(new THREE.Vector3(target, target, target), 0.08);
   });
 
-  const col = isSelected ? "#ffffff" : isHovered ? "#6ee7b7" : "#10b981";
+  const col = isSelected ? "#ffffff" : isHovered ? colors.light : colors.base;
 
   return (
     <group position={position}>
       {/* Glow sphere */}
       <mesh>
-        <sphereGeometry args={[1.3, 32, 32]} />
-        <meshBasicMaterial color="#10b981" transparent opacity={isSelected ? 0.15 : 0.06} />
+        <sphereGeometry args={[1.4, 24, 24]} />
+        <meshBasicMaterial color={colors.base} transparent opacity={isSelected ? 0.2 : 0.08} />
       </mesh>
 
-      {/* Main wireframe */}
+      {/* Rotating octahedron for visual interest */}
+      <mesh ref={innerRef} onClick={onClick}>
+        <octahedronGeometry args={[0.4, 0]} />
+        <meshBasicMaterial color={colors.light} transparent opacity={isSelected ? 0.9 : 0.4} />
+      </mesh>
+
+      {/* Main wireframe sphere */}
       <mesh ref={meshRef} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
-        <sphereGeometry args={[0.9, 28, 28]} />
-        <meshBasicMaterial color={col} wireframe transparent opacity={isSelected ? 1.0 : 0.6} />
+        <sphereGeometry args={[0.85, 20, 20]} />
+        <meshBasicMaterial color={col} wireframe transparent opacity={isSelected ? 0.95 : 0.55} linewidth={2} />
       </mesh>
 
-      {/* Inner core */}
+      {/* Inner illuminated core */}
       <mesh onClick={onClick}>
-        <sphereGeometry args={[0.5, 24, 24]} />
-        <meshBasicMaterial color={isSelected ? "#ffffff" : "#10b981"} transparent opacity={0.35} />
+        <sphereGeometry args={[0.3, 16, 16]} />
+        <meshBasicMaterial color={isSelected ? "#ffffff" : colors.light} transparent opacity={isSelected ? 1.0 : 0.5} />
       </mesh>
 
       {/* Rotating ring */}
       <group ref={ringRef}>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[1.15, 0.025, 16, 80]} />
-          <meshBasicMaterial color="#34d399" transparent opacity={0.5} />
+          <torusGeometry args={[1.1, 0.03, 12, 60]} />
+          <meshBasicMaterial color={colors.light} transparent opacity={0.6} />
         </mesh>
       </group>
 
       {/* HTML label */}
-      <Html position={[0, 1.7, 0]} center distanceFactor={12}>
+      <Html position={[0, 1.6, 0]} center distanceFactor={10}>
         <div style={{
-          background: isSelected ? "rgba(16,185,129,0.25)" : "rgba(0,0,0,0.75)",
-          border: `1px solid ${isSelected ? "rgba(16,185,129,0.8)" : "rgba(16,185,129,0.3)"}`,
-          borderRadius: "8px",
-          padding: "4px 10px",
+          background: isSelected ? `${colors.glow}` : "rgba(0,0,0,0.8)",
+          border: `2px solid ${isSelected ? colors.light : colors.base}`,
+          borderRadius: "12px",
+          padding: "7px 14px",
           whiteSpace: "nowrap",
           pointerEvents: "none",
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(10px)",
+          boxShadow: `0 0 20px ${isSelected ? colors.light + "40" : "transparent"}`,
         }}>
-          <div style={{ fontSize: "9px", letterSpacing: "0.3em", color: "#6ee7b7", textTransform: "uppercase", marginBottom: "2px" }}>
+          <div style={{ fontSize: "8px", letterSpacing: "0.35em", color: colors.light, textTransform: "uppercase", marginBottom: "4px", fontWeight: "600" }}>
             Phase {phase.number}
           </div>
-          <div style={{ fontSize: "11px", letterSpacing: "0.1em", color: "#ffffff", textTransform: "uppercase", fontWeight: "300" }}>
+          <div style={{ fontSize: "11px", letterSpacing: "0.08em", color: "#ffffff", textTransform: "uppercase", fontWeight: "400", marginBottom: "3px" }}>
             {phase.title}
           </div>
-          <div style={{ fontSize: "8px", color: "rgba(100,200,150,0.6)", marginTop: "1px" }}>
+          <div style={{ fontSize: "8px", color: colors.base + "99", letterSpacing: "0.05em" }}>
             {phase.duration}
           </div>
         </div>
@@ -78,48 +96,68 @@ function PhaseNode({ position, phase, isSelected, isHovered, onClick, onPointerO
 // ── Milestone node with label ────────────────────────────────────────
 function MilestoneNode({ position, milestone, phaseNumber, isCompleted, isSelected, onClick, onPointerOver, onPointerOut }) {
   const meshRef = useRef();
+  const rotatorRef = useRef();
 
-  useFrame((state) => {
+  // Phase-based colors for milestones
+  const phaseColors = {
+    1: { base: "#3b82f6", light: "#60a5fa" }, // blue
+    2: { base: "#8b5cf6", light: "#a78bfa" }, // purple
+    3: { base: "#f59e0b", light: "#fbbf24" }, // amber
+    4: { base: "#10b981", light: "#6ee7b7" }, // emerald
+  };
+  const colors = phaseColors[phaseNumber] || phaseColors[1];
+
+  useFrame((state, delta) => {
     if (!meshRef.current) return;
     const t = state.clock.getElapsedTime();
-    meshRef.current.position.y = position[1] + Math.sin(t * 0.9 + milestone.number * 1.2) * 0.07;
+    meshRef.current.position.y = position[1] + Math.sin(t * 0.8 + milestone.number * 1.1) * 0.06;
+    if (rotatorRef.current) rotatorRef.current.rotation.z += delta * 0.5;
   });
 
-  const col = isCompleted ? "#ffffff" : isSelected ? "#6ee7b7" : "#2dd4bf";
+  const col = isCompleted ? "#ffffff" : isSelected ? colors.light : colors.base;
 
   return (
     <group position={position}>
       {/* Glow */}
       {(isCompleted || isSelected) && (
         <mesh>
-          <sphereGeometry args={[0.55, 24, 24]} />
-          <meshBasicMaterial color={isCompleted ? "#ffffff" : "#10b981"} transparent opacity={0.12} />
+          <sphereGeometry args={[0.48, 16, 16]} />
+          <meshBasicMaterial color={isCompleted ? "#ffffff" : colors.base} transparent opacity={isSelected ? 0.15 : 0.08} />
         </mesh>
       )}
 
+      {/* Rotating tetrahedron for visual variety */}
+      <group ref={rotatorRef}>
+        <mesh>
+          <tetrahedronGeometry args={[0.2]} />
+          <meshBasicMaterial color={col} transparent opacity={isCompleted ? 0.9 : 0.7} />
+        </mesh>
+      </group>
+
       {/* Main sphere */}
       <mesh ref={meshRef} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
-        <sphereGeometry args={[0.32, 20, 20]} />
-        <meshBasicMaterial color={col} transparent opacity={isCompleted ? 0.95 : 0.65} />
+        <sphereGeometry args={[0.28, 16, 16]} />
+        <meshBasicMaterial color={col} transparent opacity={isCompleted ? 1.0 : 0.7} />
       </mesh>
 
       {/* Label */}
-      <Html position={[0, -0.75, 0]} center distanceFactor={12}>
+      <Html position={[0, -0.95, 0]} center distanceFactor={8}>
         <div style={{
-          background: "rgba(0,0,0,0.7)",
-          border: `1px solid ${isCompleted ? "rgba(255,255,255,0.3)" : "rgba(45,212,191,0.25)"}`,
-          borderRadius: "6px",
-          padding: "3px 8px",
+          background: "rgba(0,0,0,0.8)",
+          border: `1.5px solid ${isCompleted ? "#ffffff" : colors.base}`,
+          borderRadius: "8px",
+          padding: "5px 11px",
           whiteSpace: "nowrap",
           pointerEvents: "none",
-          backdropFilter: "blur(6px)",
-          maxWidth: "120px",
+          backdropFilter: "blur(8px)",
+          maxWidth: "130px",
           textAlign: "center",
+          boxShadow: `0 0 15px ${isSelected ? colors.base + "50" : "transparent"}`,
         }}>
-          <div style={{ fontSize: "7px", color: "rgba(100,200,180,0.6)", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+          <div style={{ fontSize: "7px", color: colors.light, letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: "600", marginBottom: "3px" }}>
             {phaseNumber}.{milestone.number}
           </div>
-          <div style={{ fontSize: "9px", color: isCompleted ? "#ffffff" : "#a7f3d0", letterSpacing: "0.05em", lineHeight: "1.2" }}>
+          <div style={{ fontSize: "9px", color: isCompleted ? "#ffffff" : colors.light, letterSpacing: "0.05em", lineHeight: "1.4", fontWeight: "500" }}>
             {milestone.title}
           </div>
         </div>
@@ -212,22 +250,26 @@ function Particles() {
 function SceneCore({ strategy, selectedNode, completedNodes, hoveredId, onSelectNode, onHoverNode }) {
   const phases = strategy?.phases || [];
 
-  // Phases: evenly spread horizontally
+  // Phases: arranged vertically (tree-like flow)
   const phasePositions = useMemo(() =>
     phases.map((_, i) => {
-      const spread = (phases.length - 1) * 4.5;
-      const x = -spread / 2 + i * 4.5;
-      return [x, 0, 0];
+      return [0, -i * 6, 0]; // Vertical spacing, centered on X
     }), [phases]);
 
-  // Milestones: arc below each phase
+  // Milestones: grouped on sides of each phase
   const milestonePositions = useMemo(() =>
     phases.map((phase, pi) => {
-      const [px, , pz] = phasePositions[pi];
-      return (phase.milestones || []).map((_, mi) => {
-        const count = phase.milestones.length;
-        const angle = (mi / (count - 1 || 1) - 0.5) * Math.PI * 0.8;
-        return [px + Math.sin(angle) * 2.2, -2.8, pz + Math.cos(angle) * 0.6];
+      const [px, py, pz] = phasePositions[pi];
+      const milestones = phase.milestones || [];
+      const count = milestones.length;
+      
+      // Split milestones between left and right sides
+      return milestones.map((_, mi) => {
+        const isLeft = mi % 2 === 0;
+        const positionInSide = Math.floor(mi / 2);
+        const xOffset = isLeft ? -3.2 : 3.2;
+        const yOffset = (positionInSide - Math.floor(count / 4)) * 1.1;
+        return [px + xOffset, py + yOffset, pz];
       });
     }), [phases, phasePositions]);
 
@@ -288,8 +330,8 @@ function SceneCore({ strategy, selectedNode, completedNodes, hoveredId, onSelect
 
       <OrbitControls
         enablePan enableZoom enableRotate
-        minDistance={8} maxDistance={28}
-        target={[0, -1, 0]}
+        minDistance={10} maxDistance={35}
+        target={[0, -6, 0]}
         makeDefault
       />
     </>
@@ -298,7 +340,7 @@ function SceneCore({ strategy, selectedNode, completedNodes, hoveredId, onSelect
 
 export default function StrategyScene({ strategy, selectedNode, completedNodes = [], hoveredId, onSelectNode, onHoverNode }) {
   return (
-    <Canvas camera={{ position: [0, 3, 18], fov: 60 }} dpr={[1, 2]}>
+    <Canvas camera={{ position: [12, -6, 16], fov: 55 }} dpr={[1, 2]}>
       <SceneCore
         strategy={strategy}
         selectedNode={selectedNode}

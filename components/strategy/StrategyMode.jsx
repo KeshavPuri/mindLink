@@ -175,8 +175,8 @@ function NodeDetailPanel({ node, completedNodes, onToggleComplete, onClose }) {
 
   return (
     <>
-      <div className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed top-0 right-0 h-full w-full max-w-md z-40 flex flex-col bg-gradient-to-br from-slate-900/95 to-black/95 border-l border-white/10 overflow-y-auto shadow-2xl">
+      <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed top-0 right-0 h-full w-full max-w-2xl z-50 flex flex-col bg-gradient-to-br from-slate-900/95 to-black/95 border-l border-white/10 overflow-y-auto shadow-2xl">
 
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-white/10 bg-gradient-to-r from-slate-800/50 to-slate-900/30">
@@ -741,7 +741,7 @@ export default function StrategyMode({ initialGoal, onExit }) {
             </div>
 
             {/* Split view or single views */}
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden" style={{ marginRight: selectedNode ? "50%" : "0", transition: "margin-right 200ms ease" }}>
               {/* Tree View */}
               {(viewMode === "split" || viewMode === "tree") && (
                 <div className={`flex flex-col border-r border-white/10 bg-black/40 ${viewMode === "split" ? "flex-1" : "w-full"}`}>
@@ -782,15 +782,17 @@ export default function StrategyMode({ initialGoal, onExit }) {
         </>
       )}
 
-      {/* Node detail panel */}
-      {selectedNode && (
-        <NodeDetailPanel
-          node={selectedNode}
-          completedNodes={completedNodes}
-          onToggleComplete={toggleComplete}
-          onClose={() => setSelected(null)}
-        />
-      )}
+      {/* Node detail panel - with proper positioning */}
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: selectedNode ? "auto" : "none", zIndex: 100 }}>
+        {selectedNode && (
+          <NodeDetailPanel
+            node={selectedNode}
+            completedNodes={completedNodes}
+            onToggleComplete={toggleComplete}
+            onClose={() => setSelected(null)}
+          />
+        )}
+      </div>
 
     </main>
   );
